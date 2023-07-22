@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<string>cayenne</string>
+	<string>mocha</string>
+	<string>asparagus</string>
+	<string>fern</string>
+	<string>clover</string>
+	<string>moss</string>
+	<string>teal</string>
+	<string>ocean</string>
+	<string>midnight</string>
+	<string>eggplant</string>
+	<string>plum</string>
+	<string>maroon</string>
+	<string>maraschino</string>
+	<string>tangerine</string>
+	<string>butter</string>
+	<string>lemon</string>
+	<string>lime</string>
+	<string>spring</string>
+	<string>seafoam</string>
+	<string>turquoise</string>
+	<string>aqua</string>
+	<string>blueberry</string>
+	<string>grape</string>
+	<string>magenta</string>
+	<string>strawberry</string>
+	<string>salmon</string>
+	<string>cantaloupe</string>
+	<string>banana</string>
+	<string>honeydew</string>
+	<string>flora</string>
+	<string>spindrift</string>
+	<string>ice</string>
+	<string>sky</string>
+	<string>orchid</string>
+	<string>lavender</string>
+	<string>bubblegum</string>
+	<string>carnation</string>
+	<string>snow</string>
+	<string>mercury</string>
+	<string>silver</string>
+	<string>magnesium</string>
+	<string>aluminium</string>
+	<string>nickel</string>
+	<string>tin</string>
+	<string>steel</string>
+	<string>iron</string>
+	<string>tungsten</string>
+	<string>lead</string>
+	<string>licorice</string>
+</array>
+</plist>
