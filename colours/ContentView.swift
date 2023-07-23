@@ -75,13 +75,7 @@ struct ContentView: View {
                             var alpha      : CGFloat = 0
                             if let colour = UIColor(named: colourName),
                             true == colour.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
-                                dictHSB[colourName] =
-                                    [hue, saturation, brightness
-//                                        NSNumber(floatLiteral: hue),
-//                                        NSNumber(floatLiteral: saturation),
-//                                        NSNumber(floatLiteral: brightness)
-                                    ]
-                                //)
+                                dictHSB[colourName] = [hue, saturation, brightness]
                             } else { debugPrint("no match arrayCrayonNames", colourName) }
                         }
                         // now append the full colour spectrum colours. the order added must match the enum ColourPalette
