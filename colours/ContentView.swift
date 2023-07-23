@@ -63,8 +63,8 @@ struct ContentView: View {
                     let data = try Data(contentsOf: plistPath)
                     if let arrayCrayonNames = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String] {
                         
-                        var arrayNamesArrays = ArrayColourNamesArrays()
-                        arrayNamesArrays.append(arrayCrayonNames)
+//                        var arrayNamesArrays = ArrayColourNamesArrays()
+//                        arrayNamesArrays.append(arrayCrayonNames)
                         
                         var dictHSB = ColoursDoubleDict()
                         
@@ -78,6 +78,8 @@ struct ContentView: View {
                                 dictHSB[colourName] = [hue, saturation, brightness]
                             } else { debugPrint("no match arrayCrayonNames", colourName) }
                         }
+                        
+                    /*
                         // now append the full colour spectrum colours. the order added must match the enum ColourPalette
                         var arrayColourNamesHSB = [String]()
                         for hue: Int in stride(from: 0, through: 100, by: 2) {
@@ -100,12 +102,12 @@ struct ContentView: View {
                             dictHSB[key] = [Double(hue) / 100.0,1.0,0.4]
                         }
                         arrayNamesArrays.append(arrayColourNamesHSBdark)
-
-                        
-                        
                         let dictDictArrays = DictDictArrays(coloursDoubleDict: dictHSB, arrayColourNamesArrays: arrayNamesArrays)
-                        
+
                         if let propertyListData = try? JSONEncoder().encode(dictDictArrays) {
+                     */
+                     
+                        if let propertyListData = try? JSONEncoder().encode(dictHSB) {
                             exportFileDocument = ExportFileDocument(exportArrayData: propertyListData)
                             docType = UTType.json
                         }
@@ -120,7 +122,7 @@ struct ContentView: View {
         .fileExporter(isPresented: $fileSaverShown,
                       document: exportFileDocument,
                       contentType: docType,
-                      defaultFilename: "coloursDictArrays") { result in
+                      defaultFilename: "crayonColoursDoublesDict") { result in
             switch result {
             case .success:
                 break
