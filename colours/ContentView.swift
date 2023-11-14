@@ -38,7 +38,7 @@ struct ExportFileDocument: FileDocument {
 
 
 
-//typealias ColoursDoubleDict = [String : [Double]]
+let kColourNameAddedPrefix = "#"
 
 typealias HexColourString = String
 typealias HexStringColoursDict = [String : HexColourString]
@@ -48,9 +48,8 @@ struct DictHexStringColoursDictColourNamesArrays: Codable {
     var arrayColourNamesArrays: ArrayColourNamesArrays
 }
 
-let kColourNameAddedPrefix = "#"
 
-func uiColorFromHexString(hex: String) -> UIColor? {
+func uiColorFromHexString(_ hex: String) -> UIColor? {
     var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
     hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "") // repeats below but things may change
     hexSanitized = hexSanitized.replacingOccurrences(of: kColourNameAddedPrefix, with: "")
@@ -80,7 +79,7 @@ func uiColorFromHexString(hex: String) -> UIColor? {
     return UIColor(red: r, green: g, blue: b, alpha: a)
 }
 
-func hexStringFromUIColor(uicolor: UIColor?, alpha: Bool = false) -> String? {
+func hexStringFromUIColor(_ uicolor: UIColor?, alpha: Bool = false) -> String? {
     guard let components = uicolor?.cgColor.components, components.count >= 3 else {
         return nil
     }
@@ -100,6 +99,7 @@ func hexStringFromUIColor(uicolor: UIColor?, alpha: Bool = false) -> String? {
         return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255)))
     }
 }
+
 
 
 struct ContentView: View {
@@ -123,10 +123,10 @@ struct ContentView: View {
                         
                         for colourName in arrayCrayonNames {
                             if let colour = UIColor(named: colourName),
-                               let hexStr = hexStringFromUIColor(uicolor: colour)
+                               let hexStr = hexStringFromUIColor(colour)
                             {
-                                let col2 = uiColorFromHexString(hex: hexStr)
-                                print(colourName,hexStr, hexStringFromUIColor(uicolor: col2) == hexStr)
+                                let col2 = uiColorFromHexString(hexStr)
+                                print(colourName,hexStr, hexStringFromUIColor(col2) == hexStr)
                                 dictColourNamesHexStrings[colourName] = hexStr//[hue, saturation, brightness]
                             } else { debugPrint("no match arrayCrayonNames", colourName) }
                         }
