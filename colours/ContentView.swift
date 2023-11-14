@@ -38,12 +38,69 @@ struct ExportFileDocument: FileDocument {
 
 
 
-typealias ColoursDoubleDict = [String : [Double]]
+//typealias ColoursDoubleDict = [String : [Double]]
+
+typealias HexColourString = String
+typealias HexStringColoursDict = [String : HexColourString]
 typealias ArrayColourNamesArrays = [[String]]
-struct DictDictArrays: Codable {
-    var coloursDoubleDict: ColoursDoubleDict
+struct DictHexStringColoursDictColourNamesArrays: Codable {
+    var coloursDoubleDict: HexStringColoursDict
     var arrayColourNamesArrays: ArrayColourNamesArrays
 }
+
+let kColourNameAddedPrefix = "#"
+
+func uiColorFromHexString(hex: String) -> UIColor? {
+    var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+    hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "") // repeats below but things may change
+    hexSanitized = hexSanitized.replacingOccurrences(of: kColourNameAddedPrefix, with: "")
+
+    var rgb: UInt64 = 0
+
+    var r: CGFloat = 0.0
+    var g: CGFloat = 0.0
+    var b: CGFloat = 0.0
+    var a: CGFloat = 1.0
+
+    let length = hexSanitized.count
+
+    guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
+
+    if length == 6 {
+        r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+        g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+        b = CGFloat(rgb & 0x0000FF) / 255.0
+    } else if length == 8 {
+        r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
+        g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
+        b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
+        a = CGFloat(rgb & 0x000000FF) / 255.0
+    } else { return nil }
+
+    return UIColor(red: r, green: g, blue: b, alpha: a)
+}
+
+func hexStringFromUIColor(uicolor: UIColor?, alpha: Bool = false) -> String? {
+    guard let components = uicolor?.cgColor.components, components.count >= 3 else {
+        return nil
+    }
+
+    let r = Float(components[0])
+    let g = Float(components[1])
+    let b = Float(components[2])
+    var a = Float(1.0)
+
+    if components.count >= 4 {
+        a = Float(components[3])
+    }
+
+    if alpha {
+        return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255)), lroundf(floor(a * 255)))
+    } else {
+        return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255)))
+    }
+}
+
 
 struct ContentView: View {
     @State var exportFileDocument: ExportFileDocument?
@@ -62,52 +119,19 @@ struct ContentView: View {
                 do {
                     let data = try Data(contentsOf: plistPath)
                     if let arrayCrayonNames = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String] {
-                        
-//                        var arrayNamesArrays = ArrayColourNamesArrays()
-//                        arrayNamesArrays.append(arrayCrayonNames)
-                        
-                        var dictHSB = ColoursDoubleDict()
+                        var dictColourNamesHexStrings = HexStringColoursDict()
                         
                         for colourName in arrayCrayonNames {
-                            var hue        : CGFloat = 0
-                            var saturation : CGFloat = 0
-                            var brightness : CGFloat = 0
-                            var alpha      : CGFloat = 0
                             if let colour = UIColor(named: colourName),
-                            true == colour.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
-                                dictHSB[colourName] = [hue, saturation, brightness]
+                               let hexStr = hexStringFromUIColor(uicolor: colour)
+                            {
+                                let col2 = uiColorFromHexString(hex: hexStr)
+                                print(colourName,hexStr, hexStringFromUIColor(uicolor: col2) == hexStr)
+                                dictColourNamesHexStrings[colourName] = hexStr//[hue, saturation, brightness]
                             } else { debugPrint("no match arrayCrayonNames", colourName) }
                         }
                         
-                    /*
-                        // now append the full colour spectrum colours. the order added must match the enum ColourPalette
-                        var arrayColourNamesHSB = [String]()
-                        for hue: Int in stride(from: 0, through: 100, by: 2) {
-                            let key = String(format: "%03i100100", hue)
-                            arrayColourNamesHSB.append(key)
-                            dictHSB[key] = [Double(hue) / 100.0,1.0,1.0]
-                        }
-                        // now append the greyscale
-                        for bright: Int in stride(from: 0, through: 100, by: 10) {
-                            let key = String(format: "000000%03i", bright)
-                            arrayColourNamesHSB.append(key)
-                            dictHSB[key] = [0.0,0.0,Double(bright) / 100.0]
-                        }
-                        arrayNamesArrays.append(arrayColourNamesHSB)
-                        // now append the dark full colour spectrum colours. the order added must match the enum ColourPalette
-                        var arrayColourNamesHSBdark = [String]()
-                        for hue: Int in stride(from: 0, through: 100, by: 2) {
-                            let key = String(format: "%03i100050dark", hue)
-                            arrayColourNamesHSBdark.append(key)
-                            dictHSB[key] = [Double(hue) / 100.0,1.0,0.4]
-                        }
-                        arrayNamesArrays.append(arrayColourNamesHSBdark)
-                        let dictDictArrays = DictDictArrays(coloursDoubleDict: dictHSB, arrayColourNamesArrays: arrayNamesArrays)
-
-                        if let propertyListData = try? JSONEncoder().encode(dictDictArrays) {
-                     */
-                     
-                        if let propertyListData = try? JSONEncoder().encode(dictHSB) {
+                        if let propertyListData = try? JSONEncoder().encode(dictColourNamesHexStrings) {
                             exportFileDocument = ExportFileDocument(exportArrayData: propertyListData)
                             docType = UTType.json
                         }
@@ -122,7 +146,7 @@ struct ContentView: View {
         .fileExporter(isPresented: $fileSaverShown,
                       document: exportFileDocument,
                       contentType: docType,
-                      defaultFilename: "crayonColoursDoublesDict") { result in
+                      defaultFilename: "crayonsHexStringColoursDict") { result in
             switch result {
             case .success:
                 break
