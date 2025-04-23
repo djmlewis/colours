@@ -96,7 +96,8 @@ func hexStringFromUIColor(_ uicolor: UIColor?, alpha: Bool = false) -> String? {
     if alpha {
         return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255)), lroundf(floor(a * 255)))
     } else {
-        return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255)))
+        /* now add FF to make a fully qualified RGBAstring*/
+        return kColourNameAddedPrefix + String(format: "%02lX%02lX%02lX", lroundf(floor(r * 255)), lroundf(floor(g * 255)), lroundf(floor(b * 255))) + "FF"
     }
 }
 
@@ -127,7 +128,7 @@ struct ContentView: View {
                             {
                                 let col2 = uiColorFromHexString(hexStr)
                                 print(colourName,hexStr, hexStringFromUIColor(col2) == hexStr)
-                                dictColourNamesHexStrings[colourName] = hexStr//[hue, saturation, brightness]
+                                dictColourNamesHexStrings[colourName] = hexStr
                             } else { debugPrint("no match arrayCrayonNames", colourName) }
                         }
                         
